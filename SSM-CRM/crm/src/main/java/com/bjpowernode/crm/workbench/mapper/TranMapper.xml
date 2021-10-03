@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    namespace：必须有值，自定义的唯一字符串
+    推荐使用：dao 接口的全限定名称
+-->
+<mapper namespace="com.bjpowernode.crm.workbench.mapper.TranMapper">
+    <!--
+                    id: sql 语句的自定义名称，推荐使用 dao 接口中方法名称
+         parameterType: dao 接口中方法参数的数据类型，使用数据类型的全限定类名
+            resultType: 查询语句的返回结果数据类型，使用全限定类名
+    -->
+
+    <!--线索转换
+        添加交易
+    -->
+    <insert id="insertTran" parameterType="com.bjpowernode.crm.workbench.domain.Tran" >
+          insert into tbl_tran (id, owner, money, name, expectedDate, customerId, stage, type, source, activityId,
+                                contactsId, createBy, createTime, editBy, editTime, description, contactSummary, nextContactTime
+                                )
+                        values (#{id}, #{owner}, #{money}, #{name}, #{expectedDate}, #{customerId}, #{stage}, #{type}, #{source},
+                                #{activityId}, #{contactsId}, #{createBy}, #{createTime}, #{editBy}, #{editTime}, #{description},
+                                #{contactSummary}, #{nextContactTime}
+                                )
+    </insert>
+
+    <!--
+        分页查询交易列表
+    -->
+    <select id="selectTranListForPageByCondition" parameterType="java.util.Map" resultType="com.bjpowernode.crm.workbench.domain.Tran">
+          select
+                t.id,
+                u1.name as owner,
+                t.money,
+                t.name,
+                t.expectedDate,
+                cust.name as customerId,
+                t.stage,
+                t.type,
+                t.source,
+                act.name as activityId,
+                cont.fullname as contactsId,
+                t.createBy,
+                t.createTime,
+                u2.name as editBy,
+                t.editTime,
+                t.description,
+                t.contactSummary,
+                t.nextContactTime
+          from tbl_tran as t
+          join tbl_user as u1 on t.owner = u1.id
+          join tbl_customer as cust on t.customerId = cust.id
+          join tbl_activity as act on t.activityId = act.id
+          join tbl_contacts as cont on t.contactsId = cont.id
+          left join tbl_user as u2 on t.editBy = u2.id
+          <where>
+            <if test="id!=null and id!=''">
+                t.id = #{id}
+            </if>
+            <if test="owner!=null and owner!=''">
+                and u1.name like '%' #{owner} '%'
+            </if>
+            <if test="name!=null and name!=''" >
+                and t.name like '%' #{name} '%'
+            </if>
+            <if test="customerName!=null and customerName!=''">
+                and cust.name like '%' #{customerName} '%'
+            </if>
+            <if test="stage!=null and stage!=''">
+                and t.stage = #{stage}
+            </if>
+            <if test="type!=null and type!=''">
+                and t.type = #{type}
+            </if>
+            <if test="source!=null and source!=''">
+                and t.source = #{source}
+            </if>
+            <if test="contactsName!=null and contactsName!=''">
+                and cont.fullname like '%' #{contactsName} '%'
+            </if>
+          </where>
+          order by t.createTime desc
+          limit #{skipCount}, #{pageSize}
+    </select>
+    <!--
+        查询交易记录条数
+    -->
+    <select id="selectTranCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(*)
+        from tbl_tran as t
+        join tbl_user as u1 on t.owner = u1.id
+        join tbl_customer as cust on t.customerId = cust.id
+        join tbl_activity as act on t.activityId = act.id
+        join tbl_contacts as cont on t.contactsId = cont.id
+        left join tbl_user as u2 on t.editBy = u2.id
+        <where>
+            <if test="id!=null and id!=''">
+                t.id = #{id}
+            </if>
+            <if test="owner!=null and owner!=''">
+                and u1.name like '%' #{owner} '%'
+            </if>
+            <if test="name!=null and name!=''" >
+                and t.name like '%' #{name} '%'
+            </if>
+            <if test="customerName!=null and customerName!=''">
+                and cust.name like '%' #{customerName} '%'
+            </if>
+            <if test="stage!=null and stage!=''">
+                and t.stage = #{stage}
+            </if>
+            <if test="type!=null and type!=''">
+                and t.type = #{type}
+            </if>
+            <if test="source!=null and source!=''">
+                and t.source = #{source}
+            </if>
+            <if test="contactsName!=null and contactsName!=''">
+                and cont.fullname like '%' #{contactsName} '%'
+            </if>
+        </where>
+    </select>
+
+    <!--
+        根据交易 id 查询单条交易信息
+    -->
+    <select id="selectTranById" parameterType="java.lang.String" resultType="com.bjpowernode.crm.workbench.domain.Tran">
+        select
+             t.id,
+             u1.name as owner,
+             t.money,
+             t.name,
+             t.expectedDate,
+             cust.name as customerId,
+             t.stage,
+             t.type,
+             t.source,
+             act.name as activityId,
+             cont.fullname as contactsId,
+             t.createBy,
+             t.createTime,
+             u2.name as editBy,
+             t.editTime,
+             t.description,
+             t.contactSummary,
+             t.nextContactTime
+        from tbl_tran as t
+        join tbl_user as u1 on t.owner = u1.id
+        join tbl_customer as cust on t.customerId = cust.id
+        join tbl_activity as act on t.activityId = act.id
+        join tbl_contacts as cont on t.contactsId = cont.id
+        left join tbl_user as u2 on t.editBy = u2.id
+        where
+             t.id = #{id}
+    </select>
+</mapper>

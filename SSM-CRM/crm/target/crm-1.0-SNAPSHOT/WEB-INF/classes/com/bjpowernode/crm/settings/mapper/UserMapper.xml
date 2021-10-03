@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    namespace：必须有值，自定义的唯一字符串
+    推荐使用：dao 接口的全限定名称
+-->
+<mapper namespace="com.bjpowernode.crm.settings.mapper.UserMapper">
+    <!--
+                    id: sql 语句的自定义名称，推荐使用 dao 接口中方法名称
+         parameterType: dao 接口中方法参数的数据类型，使用数据类型的全限定类名
+            resultType: 查询语句的返回结果数据类型，使用全限定类名
+    -->
+    <!-- 查询所有用户信息 -->
+    <select id="selectAllUsers" resultType="com.bjpowernode.crm.settings.domain.User" >
+        select * from tbl_user
+    </select>
+
+    <!-- 修改密码 -->
+    <!-- 1.根据 id 查询用户信息 -->
+    <select id="selectUserById" resultType="com.bjpowernode.crm.settings.domain.User">
+        select id, loginAct, name, loginPwd from tbl_user where id = #{userId}
+    </select>
+    <!-- 2.根据 id 更新密码 -->
+    <update id="updateUserPwdById">
+        update tbl_user set loginPwd = #{newPwd} where id = #{userId}
+    </update>
+
+    <!-- 登录验证 -->
+    <select id="selectUserByLoginActAndPwd" parameterType="map" resultType="com.bjpowernode.crm.settings.domain.User">
+        select * from tbl_user where loginAct = #{loginAct} and loginPwd = #{loginPwd}
+    </select>
+
+</mapper>

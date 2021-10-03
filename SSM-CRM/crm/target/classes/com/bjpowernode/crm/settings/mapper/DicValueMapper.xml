@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    namespace：必须有值，自定义的唯一字符串
+    推荐使用：dao 接口的全限定名称
+-->
+<mapper namespace="com.bjpowernode.crm.settings.mapper.DicValueMapper">
+    <!-- 返回值映射 -->
+    <resultMap id="BaseResultMap" type="com.bjpowernode.crm.settings.domain.DicValue" >
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="value" property="value" jdbcType="VARCHAR" />
+        <result column="text" property="text" jdbcType="VARCHAR" />
+        <result column="orderNo" property="orderNo" jdbcType="VARCHAR" />
+        <result column="typeCode" property="typeCode" jdbcType="VARCHAR" />
+    </resultMap>
+    <!-- 基本列名列表 -->
+    <sql id="Base_Column_List" >
+        id, value, text, orderNo, typeCode
+    </sql>
+
+    <!-- 根据字典类型的 typeCode 查询字典值 -->
+    <select id="selectDicValuesByTypeCode" resultType="com.bjpowernode.crm.settings.domain.DicValue">
+        select
+              <include refid="Base_Column_List" />
+        from
+              tbl_dic_value
+        where
+              typeCode = #{typeCode}
+        order by
+              orderNo asc
+    </select>
+
+    <!-- 查询全部的数据字典值 -->
+    <select id="selectAllDicValues"  resultType="com.bjpowernode.crm.settings.domain.DicValue">
+        select
+              <include refid="Base_Column_List" />
+        from
+              tbl_dic_value
+        order by
+              orderNo desc
+    </select>
+
+
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    namespace：必须有值，自定义的唯一字符串
+    推荐使用：dao 接口的全限定名称
+-->
+<mapper namespace="com.bjpowernode.crm.workbench.mapper.ClueActivityRelationMapper">
+    <!--
+        保存 Clue and Activity 关联
+    -->
+    <insert id="insertClueActivityRelation" parameterType="java.util.List" >
+        insert into tbl_clue_activity_relation(id, clueId, activityId) values
+        <foreach collection="list" item="car" separator="," >
+            (#{car.id}, #{car.clueId}, #{car.activityId})
+        </foreach>
+    </insert>
+
+    <!--
+        解除关联
+    -->
+    <delete id="deleteClueActivityRelation" >
+        delete from tbl_clue_activity_relation
+        where clueId = #{clueId} and activityId = #{activityId}
+    </delete>
+
+    <!--线索转换
+        根据 clueId 查询线索市场活动关系表
+    -->
+    <select id="selectClueActivityRelationByClueId" resultType="com.bjpowernode.crm.workbench.domain.ClueActivityRelation">
+        select
+            id, clueId, activityId
+        from
+            tbl_clue_activity_relation
+        where
+            clueId = #{clueId}
+    </select>
+
+    <!--线索转换
+        根据 clueId 删除线索市场活动关系表的数据
+    -->
+    <delete id="deleteClueActivityRelationByClueId" parameterType="java.lang.String">
+        delete from tbl_clue_activity_relation where clueId = #{clueId}
+    </delete>
+</mapper>

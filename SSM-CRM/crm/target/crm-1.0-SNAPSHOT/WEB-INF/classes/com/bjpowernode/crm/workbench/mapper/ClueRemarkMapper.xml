@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    namespace：必须有值，自定义的唯一字符串
+    推荐使用：dao 接口的全限定名称
+-->
+<mapper namespace="com.bjpowernode.crm.workbench.mapper.ClueRemarkMapper">
+    <!--
+                    id: sql 语句的自定义名称，推荐使用 dao 接口中方法名称
+         parameterType: dao 接口中方法参数的数据类型，使用数据类型的全限定类名
+            resultType: 查询语句的返回结果数据类型，使用全限定类名
+    -->
+
+    <!--
+        根据 clueId 查询该线索下的所有备注信息
+    -->
+    <select id="selectClueRemarkByClueId" parameterType="java.lang.String" resultType="com.bjpowernode.crm.workbench.domain.ClueRemark">
+        select
+              cr.id,
+              cr.noteContent,
+              u1.name as createBy,
+              cr.createTime,
+              u2.name as editBy,
+              cr.editTime,
+              cr.editFlag,
+              cr.clueId
+        from tbl_clue_remark as cr
+        join tbl_user as u1 on cr.createBy = u1.id
+        left join tbl_user as u2 on cr.editBy = u2.id
+        where
+              cr.clueId = #{clueId}
+    </select>
+
+    <!--线索转换
+        根据 clueId 查询该线索下的所有备注信息【其目的是为了保存到线索备注表中】
+    -->
+    <select id="selectClueRemarkForSaveTranRemarkByClueId" parameterType="java.lang.String" resultType="com.bjpowernode.crm.workbench.domain.ClueRemark" >
+        select
+              id, noteContent, createBy, createTime, editBy, editTime, editFlag, clueId
+        from
+              tbl_clue_remark
+        where
+              clueId = #{clueId}
+    </select>
+
+    <!--线索转换
+        根据 clueId 删除线索备注
+     -->
+    <delete id="deleteClueRemarkByClueId" parameterType="java.lang.String">
+        delete from tbl_clue_remark where clueId = #{clueId}
+    </delete>
+
+    <!--线索转换
+        添加线索备注
+    -->
+    <insert id="insertClueRemark" parameterType="com.bjpowernode.crm.workbench.domain.ClueRemark">
+        insert into tbl_clue_remark(id, noteContent, createBy, createTime, editBy, editTime, editFlag, clueId)
+                            values (#{id}, #{noteContent}, #{createBy}, #{createTime}, #{editBy}, #{editTime}, #{editFlag}, #{clueId});
+    </insert>
+
+    <!--
+        根据 id 删除单条线索备注
+    -->
+    <delete id="deleteClueRemarkById" parameterType="java.lang.String">
+        delete from tbl_clue_remark where id = #{id}
+    </delete>
+
+    <!--
+        根据 id 查询单条线索备注
+    -->
+    <select id="selectClueRemarkById" parameterType="java.lang.String" resultType="com.bjpowernode.crm.workbench.domain.ClueRemark">
+        select
+              id, noteContent, createBy, createTime, editBy, editTime, editFlag, clueId
+        from
+              tbl_clue_remark
+        where
+              id = #{id}
+    </select>
+
+    <update id="updateClueRemarkById" parameterType="com.bjpowernode.crm.workbench.domain.ClueRemark">
+        update
+              tbl_clue_remark
+        set
+              noteContent = #{noteContent}, editBy = #{editBy}, editTime = #{editTime}, editFlag = #{editFlag}
+        where
+              id = #{id}
+    </update>
+</mapper>
